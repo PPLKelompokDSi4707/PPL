@@ -10,4 +10,6 @@ Route::get('/', function () {
     return view('landing', compact('mapLayers'));
 });
 
+Route::get('/search', [\App\Http\Controllers\DestinationController::class, 'search'])->name('destinations.search');
+
 Route::resource('users', UserController::class);

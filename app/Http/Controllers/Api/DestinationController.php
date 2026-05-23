@@ -3,86 +3,88 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreDestinationRequest;
-use App\Http\Requests\UpdateDestinationRequest;
+use Illuminate\Http\Request;
 use App\Models\Destination;
-use Illuminate\Http\JsonResponse;
 
 class DestinationController extends Controller
 {
-    /**
-     * Display a listing of all destinations.
-     */
-    public function index(): JsonResponse
+    // GET semua data
+    public function index()
     {
-        $destinations = Destination::latest()->get();
-
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Destinations retrieved successfully.',
-            'data'    => [
-                'destinations' => $destinations,
-            ],
+            'status' => 'success',
+            'data' => Destination::all()
         ]);
     }
 
-    /**
-     * Store a newly created destination in storage.
-     */
-    public function store(StoreDestinationRequest $request): JsonResponse
+    // GET 1 data
+    public function show($id)
     {
-        $destination = Destination::create($request->validated());
+        $data = Destination::find($id);
+
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
 
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Destination created successfully.',
-            'data'    => [
-                'destination' => $destination,
-            ],
-        ], 201);
-    }
-
-    /**
-     * Display the specified destination.
-     */
-    public function show(Destination $destination): JsonResponse
-    {
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Destination retrieved successfully.',
-            'data'    => [
-                'destination' => $destination,
-            ],
+            'status' => 'success',
+            'data' => $data
         ]);
     }
 
-    /**
-     * Update the specified destination in storage.
-     */
-    public function update(UpdateDestinationRequest $request, Destination $destination): JsonResponse
+    // POST (tambah data)
+    public function store(Request $request)
     {
-        $destination->update($request->validated());
+        $data = $request->validate([
+            'name' => 'required',
+            'location' => 'required',
+        ]);
+
+        $destination = Destination::create($data);
+
+        return response()->json($destination, 201);
+    }
+
+    // PUT (update)
+    public function update(Request $request, $id)
+    {
+        $data = Destination::find($id);
+
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        $data->update($request->all());
 
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Destination updated successfully.',
-            'data'    => [
-                'destination' => $destination,
-            ],
+            'status' => 'success',
+            'data' => $data
         ]);
     }
 
-    /**
-     * Remove the specified destination from storage.
-     */
-    public function destroy(Destination $destination): JsonResponse
+    // DELETE
+    public function destroy($id)
     {
-        $destination->delete();
+        $data = Destination::find($id);
+
+        if (!$data) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        $data->delete();
 
         return response()->json([
-            'status'  => 'success',
-            'message' => 'Destination deleted successfully.',
-            'data'    => [],
+            'status' => 'success',
+            'message' => 'Data berhasil dihapus'
         ]);
     }
 }

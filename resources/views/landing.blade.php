@@ -498,10 +498,10 @@
         <h1>Jelajahi Wisata <span>Ramah Lingkungan</span> di Indonesia</h1>
         <p>Temukan destinasi wisata dengan informasi iklim dan ekosistem real-time untuk keputusan perjalanan yang lebih aman dan berkelanjutan sesuai nilai SDGs.</p>
         
-        <div class="search-box">
+        <form action="/search" method="GET" class="search-box">
             <div class="search-group">
                 <label>Lokasi atau Nama Destinasi</label>
-                <input type="text" class="search-input" placeholder="Contoh: Raja Ampat, Bali...">
+                <input type="text" name="keyword" class="search-input" placeholder="Contoh: Raja Ampat, Bali...">
             </div>
             <div class="search-group">
                 <label>Kategori Ekosistem</label>
@@ -519,8 +519,8 @@
                     <option value="waspada">🟡 Waspada</option>
                 </select>
             </div>
-            <button class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
-        </div>
+            <button type="submit" class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
+        </form>
     </section>
 
     <!-- Interactive Map Section (MOCKUP) -->

@@ -15,9 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('role', ['wisatawan', 'admin', 'super_admin'])->default('wisatawan');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            // Custom field (punyamu)
+            $table->enum('role', ['wisatawan', 'admin', 'super_admin'])->default('wisatawan');
+            $table->boolean('is_active')->default(true);
+            $table->string('phone', 20)->nullable();
+            $table->string('avatar')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });
