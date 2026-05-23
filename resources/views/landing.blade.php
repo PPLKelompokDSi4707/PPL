@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Load FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Load Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         :root {
             --primary: #15803d; /* dark green */
@@ -234,33 +236,13 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
             border: 4px solid white;
         }
 
-        .map-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(3px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-        }
-        
-        .map-overlay i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-light);
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
 
         /* Recommendations Section */
@@ -516,10 +498,10 @@
         <h1>Jelajahi Wisata <span>Ramah Lingkungan</span> di Indonesia</h1>
         <p>Temukan destinasi wisata dengan informasi iklim dan ekosistem real-time untuk keputusan perjalanan yang lebih aman dan berkelanjutan sesuai nilai SDGs.</p>
         
-        <div class="search-box">
+        <form action="/search" method="GET" class="search-box">
             <div class="search-group">
                 <label>Lokasi atau Nama Destinasi</label>
-                <input type="text" class="search-input" placeholder="Contoh: Raja Ampat, Bali...">
+                <input type="text" name="keyword" class="search-input" placeholder="Contoh: Raja Ampat, Bali...">
             </div>
             <div class="search-group">
                 <label>Kategori Ekosistem</label>
@@ -537,8 +519,8 @@
                     <option value="waspada">🟡 Waspada</option>
                 </select>
             </div>
-            <button class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
-        </div>
+            <button type="submit" class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
+        </form>
     </section>
 
     <!-- Interactive Map Section (MOCKUP) -->
@@ -548,12 +530,7 @@
             <p>Eksplorasi titik lokasi wisata di seluruh Indonesia terintegrasi dengan pemetaan Geographic Information System (GIS).</p>
         </div>
         <div class="map-container">
-            <div class="map-overlay">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <h3>Modul Peta Interaktif (Leaflet.js)</h3>
-                <p style="margin-top: 15px; max-width: 500px; line-height: 1.6;">Di sinilah Peta Interaktif akan ditampilkan. Peta akan menampilkan marker lokasi wisata yang secara visual menunjukkan indikator status lingkungan (Aman/Waspada/Bahaya).</p>
-                <button class="btn-primary" style="margin-top: 25px;"><i class="fa-solid fa-expand"></i> Buka Peta Penuh</button>
-            </div>
+            <div id="map"></div>
         </div>
     </section>
 
@@ -692,5 +669,81 @@
         <p>&copy; 2026 GreenTour Indonesia. Aplikasi pemetaan pariwisata yang mendukung Sustainable Development Goals.</p>
     </footer>
 
+    <!-- Load Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map centered on Indonesia
+            var map = L.map('map').setView([-2.5489, 118.0149], 5);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            // Dynamic data from database
+            var dbMapLayers = @json($mapLayers);
+            
+            if (dbMapLayers && dbMapLayers.length > 0) {
+                // Parse dynamic data
+                dbMapLayers.forEach(function(layer) {
+                    if (layer.layer_type === 'marker') {
+                        var coords = layer.coordinates; // assuming json {"lat": ..., "lng": ...}
+                        if(typeof coords === 'string') coords = JSON.parse(coords);
+                        
+                        var marker = L.marker([coords.lat, coords.lng]).addTo(map);
+                        var popupContent = `
+                            <div style="font-family: 'Inter', sans-serif;">
+                                <h4 style="margin: 0 0 5px 0; font-weight: 700;">${layer.name}</h4>
+                                <p style="margin: 0; font-size: 0.9rem;">
+                                    Tipe Area: <strong>${layer.area_type ? layer.area_type.replace('_', ' ') : 'Kawasan Wisata'}</strong>
+                                </p>
+                            </div>
+                        `;
+                        marker.bindPopup(popupContent);
+                    } else if (layer.layer_type === 'polygon' || layer.layer_type === 'polyline') {
+                        var coordsList = layer.coordinates;
+                        if(typeof coordsList === 'string') coordsList = JSON.parse(coordsList);
+                        var latlngs = coordsList.map(c => [c.lat, c.lng]);
+                        
+                        var shapeOptions = {
+                            color: layer.color || '#3388ff',
+                            weight: layer.stroke_weight || 3,
+                            fillColor: layer.fill_color || '#3388ff',
+                            fillOpacity: layer.fill_opacity || 0.2
+                        };
+                        
+                        var shape = layer.layer_type === 'polygon' 
+                            ? L.polygon(latlngs, shapeOptions).addTo(map)
+                            : L.polyline(latlngs, shapeOptions).addTo(map);
+                            
+                        shape.bindPopup(`<strong>${layer.name}</strong><br>${layer.description || ''}`);
+                    }
+                });
+            } else {
+                // Fallback to dummy data if DB is empty
+                var destinations = [
+                    { name: "Taman Nasional Komodo", lat: -8.5397, lng: 119.4806, status: "Aman" },
+                    { name: "Kepulauan Raja Ampat", lat: -0.2306, lng: 130.5186, status: "Aman" },
+                    { name: "Gunung Bromo", lat: -7.9425, lng: 112.9530, status: "Waspada" }
+                ];
+
+                destinations.forEach(function(dest) {
+                    var marker = L.marker([dest.lat, dest.lng]).addTo(map);
+                    var statusColor = dest.status === 'Aman' ? '#10b981' : (dest.status === 'Waspada' ? '#f59e0b' : '#ef4444');
+                    var popupContent = `
+                        <div style="font-family: 'Inter', sans-serif;">
+                            <h4 style="margin: 0 0 5px 0; font-weight: 700;">${dest.name}</h4>
+                            <p style="margin: 0; font-size: 0.9rem;">
+                                Status Lingkungan: <strong style="color: ${statusColor};">${dest.status}</strong>
+                            </p>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
