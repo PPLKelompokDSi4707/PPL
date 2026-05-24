@@ -103,10 +103,23 @@
                     </div>
                 </div>
                 <div class="info-item">
-                    <i class="fa-solid fa-cloud-sun"></i>
-                    <div>
-                        <h4>Status Iklim (FR05)</h4>
-                        <p>Akan diintegrasikan pada Sprint berikutnya.</p>
+                    <i class="fa-solid fa-cloud-sun" style="font-size: 1.5rem;"></i>
+                    <div style="flex: 1;">
+                        <h4>Prakiraan Cuaca Terkini (BMKG)</h4>
+                        @if(isset($weatherData['data'][0]['cuaca'][0][0]))
+                            @php
+                                $cuaca = $weatherData['data'][0]['cuaca'][0][0];
+                            @endphp
+                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                                <img src="{{ $cuaca['image'] }}" alt="cuaca" width="40" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));">
+                                <div>
+                                    <p style="font-weight: bold; color: var(--text-main); margin-bottom: 2px;">{{ $cuaca['weather_desc'] }}</p>
+                                    <p style="font-size: 0.85rem; color: #475569;">Suhu: <strong>{{ $cuaca['t'] }}&deg;C</strong> &nbsp;|&nbsp; RH: <strong>{{ $cuaca['hu'] }}%</strong> &nbsp;|&nbsp; Angin: <strong>{{ $cuaca['ws'] }} km/h</strong></p>
+                                </div>
+                            </div>
+                        @else
+                            <p style="margin-top: 5px;">Data cuaca BMKG tidak tersedia saat ini.</p>
+                        @endif
                     </div>
                 </div>
                 <div class="info-item">
