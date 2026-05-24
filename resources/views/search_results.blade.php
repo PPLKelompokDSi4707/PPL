@@ -62,6 +62,7 @@
     <div class="container">
         <div class="header">
             <h1>Hasil Pencarian Destinasi</h1>
+<<<<<<< HEAD
             <p>Menampilkan hasil pencarian untuk: <strong>"{{ $keyword ?? 'Semua Destinasi' }}"</strong></p>
         </div>
 
