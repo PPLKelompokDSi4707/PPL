@@ -68,6 +68,19 @@ class DestinationController extends Controller
     {
         // FR04: Detail Informasi Destinasi
         $destination = Destination::with('mapLayers')->findOrFail($id);
-        return view('destinations.show', compact('destination'));
+
+        // FR05: Integrasi Data Iklim (BMKG API)
+        $bmkgCode = $destination->bmkg_adm4 ?? '31.71.03.1001'; // Fallback ke Kemayoran jika kosong
+        $weatherData = null;
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=' . $bmkgCode);
+            if ($response->successful()) {
+                $weatherData = $response->json();
+            }
+        } catch (\Exception $e) {
+            // Fallback gracefully on timeout or error
+        }
+
+        return view('destinations.show', compact('destination', 'weatherData'));
     }
 }

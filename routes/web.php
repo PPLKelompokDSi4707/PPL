@@ -7,8 +7,8 @@ use App\Models\MapLayer;
 Route::get('/', function () {
     // Ambil data layer peta (marker, polygon, dsb) untuk FR01
     $mapLayers = MapLayer::with('destination')->where('is_visible', true)->get();
-    $destinations = \App\Models\Destination::limit(3)->get();
-    return view('landing', compact('mapLayers', 'destinations'));
+    $featuredDestinations = \App\Models\Destination::limit(3)->get();
+    return view('landing', compact('mapLayers', 'featuredDestinations'));
 });
 
 Route::get('/search', [\App\Http\Controllers\DestinationController::class, 'search'])->name('destinations.search');

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Destination extends Model
 {
-    protected $fillable = ['name', 'location'];
+    protected $fillable = ['name', 'location', 'bmkg_adm4'];
 
     public function mapLayers()
     {
