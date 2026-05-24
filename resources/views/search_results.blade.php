@@ -62,12 +62,26 @@
     <div class="container">
         <div class="header">
             <h1>Hasil Pencarian Destinasi</h1>
-            <p>Menampilkan hasil pencarian untuk: <strong>"{{ $keyword }}"</strong></p>
+<<<<<<< HEAD
+            <p>Menampilkan hasil pencarian untuk: <strong>"{{ $keyword ?? 'Semua Destinasi' }}"</strong></p>
         </div>
 
-        <form action="/search" method="GET" class="search-bar">
-            <input type="text" name="keyword" value="{{ $keyword }}" placeholder="Cari destinasi lain...">
-            <button type="submit"><i class="fa-solid fa-search"></i> Cari</button>
+        <form action="/search" method="GET" class="search-bar" style="max-width: 800px;">
+            <input type="text" name="keyword" value="{{ $keyword ?? '' }}" placeholder="Cari destinasi lain...">
+            
+            <select name="kategori" style="padding: 0.8rem; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: white;">
+                <option value="">Semua Kategori</option>
+                <option value="darat" {{ (isset($kategori) && $kategori == 'darat') ? 'selected' : '' }}>Wisata Darat</option>
+                <option value="laut" {{ (isset($kategori) && $kategori == 'laut') ? 'selected' : '' }}>Wisata Laut / Pantai</option>
+            </select>
+
+            <select name="status" style="padding: 0.8rem; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; background: white;">
+                <option value="">Semua Status</option>
+                <option value="aman" {{ (isset($status) && $status == 'aman') ? 'selected' : '' }}>🟢 Aman</option>
+                <option value="waspada" {{ (isset($status) && $status == 'waspada') ? 'selected' : '' }}>🟡 Waspada/Bahaya</option>
+            </select>
+
+            <button type="submit"><i class="fa-solid fa-search"></i> Filter</button>
         </form>
 
         <div class="content-grid">
