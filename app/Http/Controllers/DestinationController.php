@@ -61,6 +61,13 @@ class DestinationController extends Controller
                         ->where('is_visible', true)
                         ->get();
 
-        return view('search_results', compact('destinations', 'keyword', 'mapLayers'));
+        return view('search_results', compact('destinations', 'keyword', 'kategori', 'status', 'mapLayers'));
+    }
+
+    public function show($id)
+    {
+        // FR04: Detail Informasi Destinasi
+        $destination = Destination::with('mapLayers')->findOrFail($id);
+        return view('destinations.show', compact('destination'));
     }
 }

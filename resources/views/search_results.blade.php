@@ -62,7 +62,6 @@
     <div class="container">
         <div class="header">
             <h1>Hasil Pencarian Destinasi</h1>
-<<<<<<< HEAD
             <p>Menampilkan hasil pencarian untuk: <strong>"{{ $keyword ?? 'Semua Destinasi' }}"</strong></p>
         </div>
 
@@ -92,7 +91,7 @@
                     <div class="dest-info">
                         <h3 class="dest-title">{{ $dest->name }}</h3>
                         <p class="dest-location"><i class="fa-solid fa-location-dot"></i> {{ $dest->location }}</p>
-                        <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Lihat Detail &rarr;</a>
+                        <a href="{{ route('destinations.detail', $dest->id) }}" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Lihat Detail &rarr;</a>
                     </div>
                 </div>
                 @empty
@@ -127,7 +126,12 @@
                     if (layer.layer_type === 'marker') {
                         var coords = typeof layer.coordinates === 'string' ? JSON.parse(layer.coordinates) : layer.coordinates;
                         var marker = L.marker([coords.lat, coords.lng]).addTo(map);
-                        marker.bindPopup(`<strong>${layer.name}</strong>`);
+                        marker.bindPopup(`
+                            <div style="font-family: 'Inter', sans-serif;">
+                                <strong style="font-size: 1.1rem; display: block; margin-bottom: 5px;">${layer.name}</strong>
+                                ${layer.destination_id ? `<a href="/destinations/${layer.destination_id}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Lihat Detail &rarr;</a>` : ''}
+                            </div>
+                        `);
                         bounds.push([coords.lat, coords.lng]);
                     }
                 });
