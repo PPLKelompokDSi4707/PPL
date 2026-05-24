@@ -542,6 +542,48 @@
         </div>
         
         <div class="dest-grid">
+            @forelse($destinations ?? [] as $index => $dest)
+            <div class="dest-card">
+                <div class="dest-img-container">
+                    @php
+                        $images = [
+                            'https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?q=80&w=800&auto=format&fit=crop',
+                            'https://images.unsplash.com/photo-1516690553959-71a414d6b9b6?q=80&w=800&auto=format&fit=crop',
+                            'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?q=80&w=800&auto=format&fit=crop'
+                        ];
+                        $img = $images[$index % count($images)];
+                        $envStatus = $dest->environment_status ?? 'aman';
+                        $statusClass = ($envStatus == 'bahaya' || $envStatus == 'waspada') ? 'warning' : 'safe';
+                        $statusIcon = ($envStatus == 'bahaya' || $envStatus == 'waspada') ? 'fa-triangle-exclamation' : 'fa-circle-check';
+                        $statusText = $envStatus == 'ramah_lingkungan' ? 'Ramah Lingkungan' : ($envStatus == 'waspada' ? 'Waspada' : ($envStatus == 'bahaya' ? 'Bahaya' : 'Aman'));
+                    @endphp
+                    <img src="{{ $img }}" alt="{{ $dest->name }}" class="dest-img">
+                    <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
+                </div>
+                <div class="dest-info">
+                    <div class="tags">
+                        <span class="tag {{ $statusClass }}"><i class="fa-solid {{ $statusIcon }}"></i> {{ $statusText }}</span>
+                        <span class="tag category"><i class="fa-solid {{ ($dest->category ?? 'darat') == 'laut' ? 'fa-water' : 'fa-mountain' }}"></i> {{ ($dest->category ?? 'darat') == 'laut' ? 'Laut' : 'Darat' }}</span>
+                    </div>
+                    <div class="dest-header">
+                        <h3 class="dest-title">{{ $dest->name }}</h3>
+                        <div class="dest-rating">
+                            <i class="fa-solid fa-star"></i> 4.8 ({{ 120 + $dest->id * 5 }})
+                        </div>
+                    </div>
+                    <div class="dest-location">
+                        <i class="fa-solid fa-location-dot"></i> {{ $dest->location }}
+                    </div>
+                    
+                    <div class="env-status">
+                        <p><strong>Status Iklim:</strong> <span>Cerah, 28°C <i class="fa-solid fa-sun" style="color: #f59e0b"></i></span></p>
+                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terjaga Baik</span></p>
+                    </div>
+                    
+                    <a href="/destinations/{{ $dest->id }}" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
+                </div>
+            </div>
+            @empty
             <!-- Card 1 -->
             <div class="dest-card">
                 <div class="dest-img-container">
@@ -568,7 +610,7 @@
                         <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terjaga Baik</span></p>
                     </div>
                     
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
+                    <a href="/destinations/1" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
                 </div>
             </div>
 
@@ -598,7 +640,7 @@
                         <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terumbu Karang Sehat</span></p>
                     </div>
                     
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
+                    <a href="/destinations/2" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
                 </div>
             </div>
 
@@ -628,9 +670,10 @@
                         <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--warning); font-weight: 600;">Aktivitas Vulkanik</span></p>
                     </div>
                     
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Cari Alternatif</a>
+                    <a href="/destinations/3" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
                 </div>
             </div>
+            @endforelse
         </div>
     </section>
 
@@ -696,9 +739,10 @@
                         var popupContent = `
                             <div style="font-family: 'Inter', sans-serif;">
                                 <h4 style="margin: 0 0 5px 0; font-weight: 700;">${layer.name}</h4>
-                                <p style="margin: 0; font-size: 0.9rem;">
+                                <p style="margin: 0 0 10px 0; font-size: 0.9rem;">
                                     Tipe Area: <strong>${layer.area_type ? layer.area_type.replace('_', ' ') : 'Kawasan Wisata'}</strong>
                                 </p>
+                                ${layer.destination_id ? `<a href="/destinations/${layer.destination_id}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Lihat Detail &rarr;</a>` : ''}
                             </div>
                         `;
                         marker.bindPopup(popupContent);
