@@ -34,6 +34,7 @@
         
         .status-badge { display: inline-block; padding: 0.5rem 1rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; margin-top: 1rem; }
         .status-aman { background: #dcfce7; color: #166534; }
+        .status-waspada { background: #fef08a; color: #854d0e; }
         .status-bahaya { background: #fee2e2; color: #991b1b; }
         .status-konservasi { background: #e0f2fe; color: #075985; }
 
@@ -74,21 +75,31 @@
             </div>
             
             <div class="card">
-                <h2><i class="fa-solid fa-leaf"></i> Kondisi Ekosistem & Lingkungan</h2>
-                <p class="desc-text">Berikut adalah gambaran ringkas tentang kondisi lingkungan wisata ini agar Anda dapat merencanakan perjalanan yang ramah lingkungan.</p>
+                <h2><i class="fa-solid fa-shield-halved"></i> Analisis Kelayakan Lingkungan (FR07)</h2>
+                <p class="desc-text">Algoritma otomatis kami menganalisis data iklim terkini dan metrik ekosistem untuk menentukan tingkat kelayakan/keamanan kunjungan wisata Anda.</p>
                 
-                @if($destination->mapLayers->count() > 0)
-                    @php
-                        $area = $destination->mapLayers->first()->area_type;
-                        $statusClass = $area == 'zona_bahaya' ? 'status-bahaya' : ($area == 'kawasan_konservasi' ? 'status-konservasi' : 'status-aman');
-                        $statusText = str_replace('_', ' ', strtoupper($area));
-                    @endphp
-                    <div class="status-badge {{ $statusClass }}">
-                        @if($area == 'zona_bahaya') ⚠️ @else 🌿 @endif {{ $statusText }}
+                <div style="margin-top: 1.5rem; padding: 1.5rem; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 1.5rem;">
+                    <div class="status-badge {{ $kelayakan['class'] }}" style="margin: 0; font-size: 1.1rem; padding: 0.8rem 1.5rem; text-align: center; white-space: nowrap;">
+                        @if($kelayakan['status'] == 'Aman') 🟢
+                        @elseif($kelayakan['status'] == 'Waspada') 🟡
+                        @else 🔴
+                        @endif
+                        <br>{{ strtoupper($kelayakan['status']) }} UNTUK<br>DIKUNJUNGI
                     </div>
-                @else
-                    <div class="status-badge status-aman">🌿 KAWASAN WISATA UMUM</div>
-                @endif
+                    
+                    <div style="flex: 1;">
+                        @if(count($kelayakan['reasons']) > 0)
+                            <h4 style="margin-bottom: 0.5rem; color: #475569;">Alasan Analisis:</h4>
+                            <ul style="padding-left: 1.2rem; color: #64748b; font-size: 0.95rem; line-height: 1.5;">
+                                @foreach($kelayakan['reasons'] as $reason)
+                                    <li>{{ $reason }}</li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p style="color: #64748b; font-size: 0.95rem;">Kondisi cuaca bersahabat dan seluruh metrik ekosistem di area ini mendukung aktivitas wisata Anda.</p>
+                        @endif
+                    </div>
+                </div>
             </div>
         </div>
 

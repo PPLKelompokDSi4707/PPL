@@ -81,6 +81,54 @@ class DestinationController extends Controller
             // Fallback gracefully on timeout or error
         }
 
-        return view('destinations.show', compact('destination', 'weatherData'));
+        // FR07: Analisis Kelayakan Destinasi
+        $score = 0; // 0: Aman, 1: Waspada, 2: Bahaya
+        $reasons = [];
+
+        if (isset($weatherData['data'][0]['cuaca'][0][0])) {
+            $cuaca = $weatherData['data'][0]['cuaca'][0][0];
+            $badWeather = ['Hujan Sedang', 'Hujan Lebat', 'Hujan Petir', 'Angin Kencang'];
+            if (in_array($cuaca['weather_desc'], $badWeather) || $cuaca['ws'] > 30) {
+                $score += 2;
+                $reasons[] = "Cuaca diprakirakan " . strtolower($cuaca['weather_desc']) . " atau angin kencang.";
+            } elseif (str_contains($cuaca['weather_desc'], 'Hujan')) {
+                $score += 1;
+                $reasons[] = "Cuaca diprakirakan berpotensi hujan.";
+            }
+        }
+
+        if ($destination->biotaData) {
+            $biota = $destination->biotaData;
+            if (in_array($biota->coral_reef_status, ['kritis', 'rusak'])) {
+                $score += 1;
+                $reasons[] = "Ekosistem laut/terumbu karang sedang dalam kondisi rentan.";
+            }
+            if ($biota->forest_cover_pct !== null && $biota->forest_cover_pct < 30) {
+                $score += 1;
+                $reasons[] = "Tutupan hutan rendah, rawan terjadi erosi/longsor jika hujan.";
+            }
+            if ($biota->invasive_species !== null) {
+                $score += 1;
+                $reasons[] = "Terdeteksi adanya spesies invasif di area ekosistem.";
+            }
+        }
+
+        $kelayakanStatus = 'Aman';
+        $kelayakanClass = 'status-aman';
+        if ($score >= 2) {
+            $kelayakanStatus = 'Bahaya';
+            $kelayakanClass = 'status-bahaya';
+        } elseif ($score == 1) {
+            $kelayakanStatus = 'Waspada';
+            $kelayakanClass = 'status-waspada';
+        }
+        
+        $kelayakan = [
+            'status' => $kelayakanStatus,
+            'class' => $kelayakanClass,
+            'reasons' => $reasons
+        ];
+
+        return view('destinations.show', compact('destination', 'weatherData', 'kelayakan'));
     }
 }
