@@ -529,10 +529,7 @@
             <h2>Peta Interaktif Destinasi GIS</h2>
             <p>Eksplorasi titik lokasi wisata di seluruh Indonesia terintegrasi dengan pemetaan Geographic Information System (GIS).</p>
         </div>
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> ba0baf6bb6ca24ce5af4017f9247e348aa1db5e1
+
 
     <!-- FR08: Rekomendasi Destinasi -->
     @if(isset($recommendations) && $recommendations->count() > 0)
@@ -560,11 +557,6 @@
     </div>
     @endif
 
-<<<<<<< HEAD
-=======
-=======
->>>>>>> a83da3b2d672c4393570a0365afc83a1ab6fcbfc
->>>>>>> ba0baf6bb6ca24ce5af4017f9247e348aa1db5e1
         <div class="map-container">
             <div id="map"></div>
         </div>
