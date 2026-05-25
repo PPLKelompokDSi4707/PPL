@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('destinations', function (Blueprint $table) {
             $table->string('category')->nullable()->comment('darat atau laut');
             $table->string('environment_status')->nullable()->comment('aman, waspada, atau bahaya');
+            $table->string('bmkg_adm4')->nullable()->comment('Kode wilayah tingkat 4 BMKG');
         });
     }
 

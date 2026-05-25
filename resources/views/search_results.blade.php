@@ -129,7 +129,7 @@
                         marker.bindPopup(`
                             <div style="font-family: 'Inter', sans-serif;">
                                 <strong style="font-size: 1.1rem; display: block; margin-bottom: 5px;">${layer.name}</strong>
-                                ${layer.destination_id ? `<a href="/destinations/${layer.destination_id}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Lihat Detail &rarr;</a>` : ''}
+                                <a href="/destinations/${layer.destination_id}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Lihat Detail &rarr;</a>
                             </div>
                         `);
                         bounds.push([coords.lat, coords.lng]);

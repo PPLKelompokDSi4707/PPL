@@ -41,9 +41,13 @@ class DestinationSeeder extends Seeder
             
             $name = $prefix . ' ' . $faker->city;
             
+            // Generate random valid BMKG adm4 codes
+            $bmkgCodes = ['31.71.03.1001', '31.71.01.1001', '31.71.04.1001', '51.03.01.2001', '32.01.01.2001', '32.73.01.1001'];
+            
             $destination = Destination::create([
                 'name' => $name,
                 'location' => $faker->city . ', ' . $faker->state,
+                'bmkg_adm4' => $faker->randomElement($bmkgCodes),
             ]);
 
             // Assign status lingkungan secara random agar FR03 berfungsi

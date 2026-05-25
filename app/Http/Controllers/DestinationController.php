@@ -67,7 +67,7 @@ class DestinationController extends Controller
     public function show($id)
     {
         // FR04: Detail Informasi Destinasi
-        $destination = Destination::with('mapLayers')->findOrFail($id);
+        $destination = Destination::with(['mapLayers', 'biotaData'])->findOrFail($id);
 
         // FR05: Integrasi Data Iklim (BMKG API)
         $bmkgCode = $destination->bmkg_adm4 ?? '31.71.03.1001'; // Fallback ke Kemayoran jika kosong

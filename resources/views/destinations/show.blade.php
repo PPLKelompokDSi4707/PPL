@@ -95,17 +95,19 @@
         <div class="sidebar">
             <div class="card">
                 <h2><i class="fa-solid fa-list-check"></i> Info Singkat</h2>
+                
                 <div class="info-item">
-                    <i class="fa-solid fa-map"></i>
-                    <div>
+                    <i class="fa-solid fa-map" style="font-size: 1.5rem;"></i>
+                    <div style="flex: 1;">
                         <h4>Lokasi Terdaftar</h4>
                         <p>{{ $destination->location }}</p>
                     </div>
                 </div>
+
                 <div class="info-item">
                     <i class="fa-solid fa-cloud-sun" style="font-size: 1.5rem;"></i>
                     <div style="flex: 1;">
-                        <h4>Prakiraan Cuaca Terkini (BMKG)</h4>
+                        <h4>Prakiraan Cuaca (BMKG)</h4>
                         @if(isset($weatherData['data'][0]['cuaca'][0][0]))
                             @php
                                 $cuaca = $weatherData['data'][0]['cuaca'][0][0];
@@ -114,21 +116,41 @@
                                 <img src="{{ $cuaca['image'] }}" alt="cuaca" width="40" style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));">
                                 <div>
                                     <p style="font-weight: bold; color: var(--text-main); margin-bottom: 2px;">{{ $cuaca['weather_desc'] }}</p>
-                                    <p style="font-size: 0.85rem; color: #475569;">Suhu: <strong>{{ $cuaca['t'] }}&deg;C</strong> &nbsp;|&nbsp; RH: <strong>{{ $cuaca['hu'] }}%</strong> &nbsp;|&nbsp; Angin: <strong>{{ $cuaca['ws'] }} km/h</strong></p>
+                                    <p style="font-size: 0.85rem; color: #475569;">Suhu: <strong>{{ $cuaca['t'] }}&deg;C</strong> &nbsp;|&nbsp; Angin: <strong>{{ $cuaca['ws'] }} km/h</strong></p>
                                 </div>
                             </div>
                         @else
-                            <p style="margin-top: 5px;">Data cuaca BMKG tidak tersedia saat ini.</p>
+                            <p style="margin-top: 5px;">Data cuaca BMKG tidak tersedia.</p>
                         @endif
                     </div>
                 </div>
+
                 <div class="info-item">
-                    <i class="fa-solid fa-fish-fins"></i>
-                    <div>
-                        <h4>Kondisi Biota (FR06)</h4>
-                        <p>Akan diintegrasikan pada Sprint berikutnya.</p>
+                    <i class="fa-solid fa-fish-fins" style="font-size: 1.5rem;"></i>
+                    <div style="flex: 1;">
+                        <h4>Kondisi Ekosistem & Biota (FR06)</h4>
+                        @if($destination->biotaData)
+                            <div style="margin-top: 8px; background: white; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 0.85rem; color: #475569;">
+                                @if($destination->biotaData->coral_reef_status)
+                                    <p style="margin-bottom: 4px;"><strong><i class="fa-solid fa-water"></i> Terumbu Karang:</strong> {{ str_replace('_', ' ', ucwords($destination->biotaData->coral_reef_status)) }} ({{ $destination->biotaData->coral_coverage_pct }}%)</p>
+                                    <p style="margin-bottom: 4px;"><strong><i class="fa-solid fa-fish"></i> Ikan:</strong> Diversitas {{ ucwords($destination->biotaData->fish_diversity) }}</p>
+                                @endif
+                                
+                                @if($destination->biotaData->forest_cover_pct)
+                                    <p style="margin-bottom: 4px;"><strong><i class="fa-solid fa-tree"></i> Tutupan Hutan:</strong> {{ $destination->biotaData->forest_cover_pct }}%</p>
+                                    <p style="margin-bottom: 4px;"><strong><i class="fa-solid fa-paw"></i> Biodiversitas:</strong> Indeks {{ ucwords($destination->biotaData->biodiversity_index) }}</p>
+                                @endif
+                                
+                                <p style="margin-bottom: 4px;"><strong>Flora Khas:</strong> {{ ucwords($destination->biotaData->flora_highlight) }}</p>
+                                <p style="margin-bottom: 4px;"><strong>Fauna Khas:</strong> {{ ucwords($destination->biotaData->fauna_highlight) }}</p>
+                                <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 8px; border-top: 1px solid #e2e8f0; padding-top: 5px;">Sumber: Data Internal Database</p>
+                            </div>
+                        @else
+                            <p style="margin-top: 5px;">Data ekosistem belum direkam untuk lokasi ini.</p>
+                        @endif
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

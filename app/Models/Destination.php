@@ -12,4 +12,9 @@ class Destination extends Model
     {
         return $this->hasMany(MapLayer::class);
     }
+
+    public function biotaData()
+    {
+        return $this->hasOne(BiotaData::class);
+    }
 }
