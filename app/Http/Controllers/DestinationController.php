@@ -10,14 +10,14 @@ class DestinationController extends Controller
 {
     public function index()
     {
-        $mapLayers = \App\Models\MapLayer::with('destination')->where('is_visible', true)->get();
-        
-        // FR08: Rekomendasi Destinasi Ramah Lingkungan
-        // Mengambil destinasi dengan ekosistem terbaik (tutupan hutan tinggi atau karang sangat baik)
+        $mapLayers = MapLayer::with('destination')
+            ->where('is_visible', true)
+            ->get();
+
         $recommendations = Destination::with('biotaData')
             ->whereHas('biotaData', function ($query) {
                 $query->where('forest_cover_pct', '>=', 70)
-                      ->orWhereIn('coral_reef_status', ['sangat_baik', 'baik']);
+                    ->orWhereIn('coral_reef_status', ['sangat_baik', 'baik']);
             })
             ->inRandomOrder()
             ->take(4)
@@ -32,24 +32,22 @@ class DestinationController extends Controller
         $kategori = $request->input('kategori');
         $status = $request->input('status');
 
-        // Pencarian (FR02)
         $query = Destination::query();
 
         if (!empty($keyword)) {
-            $query->where(function($q) use ($keyword) {
+            $query->where(function ($q) use ($keyword) {
                 $q->where('name', 'LIKE', "%{$keyword}%")
                   ->orWhere('location', 'LIKE', "%{$keyword}%");
             });
         }
 
-        // Filter Lingkungan (FR03)
         if (!empty($status)) {
             if ($status === 'aman') {
-                $query->whereDoesntHave('mapLayers', function($q) {
+                $query->whereDoesntHave('mapLayers', function ($q) {
                     $q->where('area_type', 'zona_bahaya');
                 });
             } elseif ($status === 'waspada' || $status === 'bahaya') {
-                $query->whereHas('mapLayers', function($q) {
+                $query->whereHas('mapLayers', function ($q) {
                     $q->where('area_type', 'zona_bahaya');
                 });
             }
@@ -57,55 +55,62 @@ class DestinationController extends Controller
 
         if (!empty($kategori)) {
             if ($kategori === 'laut') {
-                $query->where(function($q) {
-                    $q->where('name', 'LIKE', "%Pantai%")
-                      ->orWhere('name', 'LIKE', "%Pulau%")
-                      ->orWhere('name', 'LIKE', "%Laut%");
+                $query->where(function ($q) {
+                    $q->where('name', 'LIKE', '%Pantai%')
+                      ->orWhere('name', 'LIKE', '%Pulau%')
+                      ->orWhere('name', 'LIKE', '%Laut%');
                 });
             } elseif ($kategori === 'darat') {
-                $query->where(function($q) {
-                    $q->where('name', 'LIKE', "%Gunung%")
-                      ->orWhere('name', 'LIKE', "%Taman Nasional%")
-                      ->orWhere('name', 'LIKE', "%Bukit%");
+                $query->where(function ($q) {
+                    $q->where('name', 'LIKE', '%Gunung%')
+                      ->orWhere('name', 'LIKE', '%Taman Nasional%')
+                      ->orWhere('name', 'LIKE', '%Bukit%');
                 });
             }
         }
 
         $destinations = $query->get();
 
-        // Kita juga mem-passing data mapLayers terkait destinasi yang dicari agar peta bisa terupdate
         $destinationIds = $destinations->pluck('id')->toArray();
-        $mapLayers = MapLayer::whereIn('destination_id', $destinationIds)
-                        ->where('is_visible', true)
-                        ->get();
 
-        return view('search_results', compact('destinations', 'keyword', 'kategori', 'status', 'mapLayers'));
+        $mapLayers = MapLayer::whereIn('destination_id', $destinationIds)
+            ->where('is_visible', true)
+            ->get();
+
+        return view('search_results', compact(
+            'destinations',
+            'keyword',
+            'kategori',
+            'status',
+            'mapLayers'
+        ));
     }
 
     public function show($id)
     {
-        // FR04: Detail Informasi Destinasi
         $destination = Destination::with(['mapLayers', 'biotaData'])->findOrFail($id);
 
-        // FR05: Integrasi Data Iklim (BMKG API)
-        $bmkgCode = $destination->bmkg_adm4 ?? '31.71.03.1001'; // Fallback ke Kemayoran jika kosong
+        $bmkgCode = $destination->bmkg_adm4 ?? '31.71.03.1001';
         $weatherData = null;
+
         try {
-            $response = \Illuminate\Support\Facades\Http::timeout(5)->get('https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=' . $bmkgCode);
+            $response = \Illuminate\Support\Facades\Http::timeout(5)
+                ->get('https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=' . $bmkgCode);
+
             if ($response->successful()) {
                 $weatherData = $response->json();
             }
         } catch (\Exception $e) {
-            // Fallback gracefully on timeout or error
+            //
         }
 
-        // FR07: Analisis Kelayakan Destinasi
-        $score = 0; // 0: Aman, 1: Waspada, 2: Bahaya
+        $score = 0;
         $reasons = [];
 
         if (isset($weatherData['data'][0]['cuaca'][0][0])) {
             $cuaca = $weatherData['data'][0]['cuaca'][0][0];
             $badWeather = ['Hujan Sedang', 'Hujan Lebat', 'Hujan Petir', 'Angin Kencang'];
+
             if (in_array($cuaca['weather_desc'], $badWeather) || $cuaca['ws'] > 30) {
                 $score += 2;
                 $reasons[] = "Cuaca diprakirakan " . strtolower($cuaca['weather_desc']) . " atau angin kencang.";
@@ -117,14 +122,17 @@ class DestinationController extends Controller
 
         if ($destination->biotaData) {
             $biota = $destination->biotaData;
+
             if (in_array($biota->coral_reef_status, ['kritis', 'rusak'])) {
                 $score += 1;
                 $reasons[] = "Ekosistem laut/terumbu karang sedang dalam kondisi rentan.";
             }
+
             if ($biota->forest_cover_pct !== null && $biota->forest_cover_pct < 30) {
                 $score += 1;
                 $reasons[] = "Tutupan hutan rendah, rawan terjadi erosi/longsor jika hujan.";
             }
+
             if ($biota->invasive_species !== null) {
                 $score += 1;
                 $reasons[] = "Terdeteksi adanya spesies invasif di area ekosistem.";
@@ -133,6 +141,7 @@ class DestinationController extends Controller
 
         $kelayakanStatus = 'Aman';
         $kelayakanClass = 'status-aman';
+
         if ($score >= 2) {
             $kelayakanStatus = 'Bahaya';
             $kelayakanClass = 'status-bahaya';
@@ -140,7 +149,7 @@ class DestinationController extends Controller
             $kelayakanStatus = 'Waspada';
             $kelayakanClass = 'status-waspada';
         }
-        
+
         $kelayakan = [
             'status' => $kelayakanStatus,
             'class' => $kelayakanClass,

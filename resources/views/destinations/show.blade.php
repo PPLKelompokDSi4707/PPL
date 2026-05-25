@@ -102,6 +102,7 @@
                 </div>
             </div>
 
+
             <!-- FR09: Visualisasi Data Lingkungan -->
             <div class="card">
                 <h2><i class="fa-solid fa-chart-column"></i> Visualisasi Data Lingkungan (FR09)</h2>
@@ -151,6 +152,7 @@
                     
                 </div>
             </div>
+
         </div>
 
         <div class="sidebar">
