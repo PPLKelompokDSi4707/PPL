@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('destinations') || Schema::hasColumn('destinations', 'bmkg_adm4')) {
+            return;
+        }
+
         Schema::table('destinations', function (Blueprint $table) {
             $table->string('bmkg_adm4')->nullable()->comment('Kode wilayah tingkat 4 BMKG');
         });
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('destinations') || ! Schema::hasColumn('destinations', 'bmkg_adm4')) {
+            return;
+        }
+
         Schema::table('destinations', function (Blueprint $table) {
             $table->dropColumn('bmkg_adm4');
         });
