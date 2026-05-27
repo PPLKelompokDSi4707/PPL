@@ -6,7 +6,6 @@
     <title>{{ $destination->name }} - GreenTour</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         .star-rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 0.2rem; }
         .star-rating input[type="radio"] { display: none; }
@@ -14,7 +13,6 @@
         .star-rating label:hover, .star-rating label:hover ~ label { color: #fcd34d !important; }
         .star-rating input[type="radio"]:checked ~ label, .star-rating input[type="radio"]:checked + label { color: #fbbf24; }
     </style>
-    
     <style>
         :root {
             --primary: #15803d;
@@ -191,7 +189,6 @@
                     
                 </div>
             </div>
-
             <!-- FR11: Sistem Review dan Rating -->
             <div class="card" style="margin-top: 2rem;">
                 <h2><i class="fa-solid fa-star" style="color: #fbbf24;"></i> Ulasan & Penilaian (FR11)</h2>

@@ -84,6 +84,7 @@ class DestinationController extends Controller
 
     public function show($id)
     {
+        // FR04: Detail Informasi Destinasi
         $destination = Destination::with(['mapLayers', 'biotaData', 'reviews.user'])->findOrFail($id);
 
         // FR05: Integrasi Data Iklim (BMKG API)
