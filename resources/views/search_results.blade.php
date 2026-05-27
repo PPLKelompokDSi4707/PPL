@@ -56,7 +56,19 @@
 
     <nav>
         <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</a>
-        <a href="/" class="btn-outline">Kembali</a>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="/" class="btn-outline">Kembali</a>
+            @auth
+                <span style="font-weight: 500; margin-right: 10px;">Halo, {{ Auth::user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" style="background:none; border:none; color:var(--primary); font-weight:600; cursor:pointer;">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" style="text-decoration:none; color:var(--text-main); font-weight:500;">Masuk</a>
+                <a href="{{ route('register') }}" style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:600;">Daftar</a>
+            @endauth
+        </div>
     </nav>
 
     <div class="container">

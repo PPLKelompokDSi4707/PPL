@@ -51,14 +51,45 @@
 
     <nav>
         <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</a>
-        <a href="javascript:history.back()" class="btn-outline">Kembali</a>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="javascript:history.back()" class="btn-outline">Kembali</a>
+            @auth
+                <span style="font-weight: 500; margin-right: 10px;">Halo, {{ Auth::user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+                    @csrf
+                    <button type="submit" style="background:none; border:none; color:var(--primary); font-weight:600; cursor:pointer;">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" style="text-decoration:none; color:var(--text-main); font-weight:500;">Masuk</a>
+                <a href="{{ route('register') }}" style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:600;">Daftar</a>
+            @endauth
+        </div>
     </nav>
 
     <div class="hero">
         <div class="hero-overlay">
-            <div class="hero-content">
-                <h1>{{ $destination->name }}</h1>
-                <p><i class="fa-solid fa-location-dot"></i> {{ $destination->location }}</p>
+            <div class="hero-content" style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end;">
+                <div>
+                    <h1>{{ $destination->name }}</h1>
+                    <p><i class="fa-solid fa-location-dot"></i> {{ $destination->location }}</p>
+                </div>
+                
+                <div>
+                    @auth
+                    <form action="{{ route('bookmarks.toggle', $destination->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" style="background: {{ $isBookmarked ? 'var(--primary)' : 'rgba(255,255,255,0.2)' }}; color: white; border: 2px solid {{ $isBookmarked ? 'var(--primary)' : 'white' }}; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s; backdrop-filter: blur(5px);">
+                            <i class="{{ $isBookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark"></i>
+                            {{ $isBookmarked ? 'Tersimpan' : 'Simpan Destinasi' }}
+                        </button>
+                    </form>
+                    @else
+                    <a href="{{ route('login') }}" style="text-decoration: none; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; padding: 10px 20px; border-radius: 50px; display: inline-flex; align-items: center; gap: 8px; font-size: 1rem; font-weight: 600; backdrop-filter: blur(5px); transition: all 0.3s;">
+                        <i class="fa-regular fa-bookmark"></i>
+                        Simpan Destinasi
+                    </a>
+                    @endauth
+                </div>
             </div>
         </div>
     </div>
@@ -101,7 +132,6 @@
                     </div>
                 </div>
             </div>
-
 
             <!-- FR09: Visualisasi Data Lingkungan -->
             <div class="card">
@@ -152,7 +182,6 @@
                     
                 </div>
             </div>
-
         </div>
 
         <div class="sidebar">
