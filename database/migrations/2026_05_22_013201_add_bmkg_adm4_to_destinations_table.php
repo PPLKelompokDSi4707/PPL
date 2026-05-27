@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('destinations', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('name');
-            $table->string('location');
+        Schema::table('destinations', function (Blueprint $table) {
+            $table->string('bmkg_adm4')->nullable()->comment('Kode wilayah tingkat 4 BMKG');
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('destinations');
+        Schema::table('destinations', function (Blueprint $table) {
+            $table->dropColumn('bmkg_adm4');
+        });
     }
 };
