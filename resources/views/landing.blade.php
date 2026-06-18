@@ -522,33 +522,6 @@
         </div>
 
 
-    <!-- FR08: Rekomendasi Destinasi -->
-    @if(isset($recommendations) && $recommendations->count() > 0)
-    <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-        <h2 style="color: var(--primary); font-size: 2rem; margin-bottom: 10px; text-align: center;"><i class="fa-solid fa-medal"></i> Rekomendasi Ramah Lingkungan</h2>
-        <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Destinasi pilihan dengan kualitas ekosistem terbaik dan terjaga untuk pengalaman wisata alam yang maksimal.</p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-            @foreach($recommendations as $rec)
-            <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: transform 0.3s; border: 1px solid #e2e8f0; display: flex; flex-direction: column;">
-                <div style="height: 150px; background: linear-gradient(45deg, #10b981, #3b82f6); position: relative;">
-                    <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; color: #059669;">
-                        ⭐ EKOSISTEM UNGGULAN
-                    </div>
-                </div>
-                <div style="padding: 15px; flex: 1; display: flex; flex-direction: column;">
-                    <h3 style="margin: 0 0 5px 0; font-size: 1.2rem;">{{ $rec->name }}</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0 0 15px 0;"><i class="fa-solid fa-location-dot"></i> {{ $rec->location }}</p>
-                    <div style="flex: 1;"></div>
-                    <a href="{{ route('destinations.detail', $rec->id) }}" style="display: block; text-align: center; background: var(--primary); color: white; text-decoration: none; padding: 8px; border-radius: 6px; font-weight: 600; font-size: 0.9rem;">Jelajahi &rarr;</a>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-
         <div class="map-container">
             <div id="map"></div>
         </div>

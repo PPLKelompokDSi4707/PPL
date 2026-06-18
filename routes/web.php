@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\UserController;
 
-Route::get('/', [DestinationController::class, 'index'])->name('home');
+Route::get('/', [DestinationController::class, 'index'])->name('landing');
 Route::get('/search', [DestinationController::class, 'search'])->name('destinations.search');
 Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('destinations.detail');
 
