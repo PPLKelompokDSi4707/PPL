@@ -56,26 +56,7 @@
 </head>
 <body>
 
-<<<<<<< HEAD
-    <nav>
-        <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</a>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <a href="javascript:history.back()" class="btn-outline">Kembali</a>
-            @auth
-                <span style="font-weight: 500; margin-right: 10px;">Halo, {{ Auth::user()->name }}</span>
-                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <button type="submit" style="background:none; border:none; color:var(--primary); font-weight:600; cursor:pointer;">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" style="text-decoration:none; color:var(--text-main); font-weight:500;">Masuk</a>
-                <a href="{{ route('register') }}" style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:600;">Daftar</a>
-            @endauth
-        </div>
-    </nav>
-=======
     @include('partials.navbar')
->>>>>>> alvi
 
     <div class="hero" style="background: url('{{ $destination->image_url ?: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop' }}') center/cover;">
         <div class="hero-overlay">
@@ -193,10 +174,7 @@
                     
                 </div>
             </div>
-<<<<<<< HEAD
-=======
 
->>>>>>> alvi
             <!-- FR11: Sistem Review dan Rating -->
             <div class="card" style="margin-top: 2rem;">
                 <h2><i class="fa-solid fa-star" style="color: #fbbf24;"></i> Ulasan & Penilaian (FR11)</h2>
@@ -287,10 +265,7 @@
                     @endif
                 </div>
             </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> alvi
         </div>
 
         <div class="sidebar">

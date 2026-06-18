@@ -483,30 +483,7 @@
 </head>
 <body>
 
-<<<<<<< HEAD
-    <nav>
-        <div class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</div>
-        <div class="nav-links">
-            <a href="#peta">Peta Wisata</a>
-            <a href="#rekomendasi">Rekomendasi Destinasi</a>
-            <a href="#fitur">Fitur Sistem</a>
-        </div>
-        <div style="display: flex; gap: 10px; align-items: center;">
-            @auth
-                <span style="font-weight: 500; margin-right: 10px;">Halo, {{ Auth::user()->name }}</span>
-                <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-                    @csrf
-                    <button type="submit" style="background:none; border:none; color:var(--primary); font-weight:600; cursor:pointer;">Logout</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" style="text-decoration:none; color:var(--text-main); font-weight:500;">Masuk</a>
-                <a href="{{ route('register') }}" style="background:var(--primary); color:white; padding:8px 16px; border-radius:8px; text-decoration:none; font-weight:600;">Daftar</a>
-            @endauth
-        </div>
-    </nav>
-=======
     @include('partials.navbar')
->>>>>>> alvi
 
     <section class="hero">
         <h1>Jelajahi Wisata <span>Ramah Lingkungan</span> di Indonesia</h1>
@@ -544,7 +521,7 @@
             <p>Eksplorasi titik lokasi wisata di seluruh Indonesia terintegrasi dengan pemetaan Geographic Information System (GIS).</p>
         </div>
 
-<<<<<<< HEAD
+
     <!-- FR08: Rekomendasi Destinasi -->
     @if(isset($recommendations) && $recommendations->count() > 0)
     <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
@@ -571,8 +548,7 @@
     </div>
     @endif
 
-=======
->>>>>>> alvi
+
         <div class="map-container">
             <div id="map"></div>
         </div>

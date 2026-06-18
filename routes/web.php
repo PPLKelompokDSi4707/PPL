@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DestinationController;
 use App\Http\Controllers\UserController;
 
-<<<<<<< HEAD
 Route::get('/', [DestinationController::class, 'index'])->name('home');
 Route::get('/search', [DestinationController::class, 'search'])->name('destinations.search');
 Route::get('/destinations/{id}', [DestinationController::class, 'show'])->name('destinations.detail');
@@ -16,15 +15,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
 });
-=======
-Route::get('/', [\App\Http\Controllers\DestinationController::class, 'index'])->name('home');
-
-Route::get('/login', [\App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
-Route::get('/register', [\App\Http\Controllers\AuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
->>>>>>> alvi
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')

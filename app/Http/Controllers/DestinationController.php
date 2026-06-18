@@ -10,28 +10,16 @@ class DestinationController extends Controller
 {
     public function index()
     {
-<<<<<<< HEAD
-        $mapLayers = \App\Models\MapLayer::with('destination')->where('is_visible', true)->get();
-        
-        // FR08: Rekomendasi Destinasi Ramah Lingkungan
-        // Mengambil destinasi dengan ekosistem terbaik (tutupan hutan tinggi atau karang sangat baik)
-=======
         $mapLayers = \App\Models\MapLayer::with('destination')->where('is_visible', true)->whereNotNull('destination_id')->get();
         
         // FR08: Rekomendasi Destinasi Ramah Lingkungan
         // Coba cari yang ekosistemnya bagus dulu
->>>>>>> alvi
         $recommendations = Destination::with('biotaData')
             ->whereHas('biotaData', function ($query) {
                 $query->where('forest_cover_pct', '>=', 70)
                       ->orWhereIn('coral_reef_status', ['sangat_baik', 'baik']);
             })
             ->inRandomOrder()
-<<<<<<< HEAD
-            ->take(4)
-            ->get();
-
-=======
             ->take(3)
             ->get();
 
@@ -59,8 +47,6 @@ class DestinationController extends Controller
                 // Abaikan jika API timeout agar web tidak crash
             }
         }
-
->>>>>>> alvi
         return view('landing', compact('mapLayers', 'recommendations'));
     }
 
