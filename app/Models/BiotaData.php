@@ -4,14 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Bookmark extends Model
+class BiotaData extends Model
 {
-    protected $fillable = ['user_id', 'destination_id'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $table = 'biota_data';
+    protected $guarded = [];
 
     public function destination()
     {

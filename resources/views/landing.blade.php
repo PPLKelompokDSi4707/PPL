@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Load FontAwesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Load Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <style>
         :root {
             --primary: #15803d; /* dark green */
@@ -234,33 +236,13 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
             border: 4px solid white;
         }
 
-        .map-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(3px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-        }
-        
-        .map-overlay i {
-            font-size: 4rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-light);
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+        #map {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
 
         /* Recommendations Section */
@@ -501,25 +483,16 @@
 </head>
 <body>
 
-    <nav>
-        <a href="#" class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</a>
-        <div class="nav-links">
-            <a href="#peta">Peta Wisata</a>
-            <a href="#rekomendasi">Rekomendasi Destinasi</a>
-            <a href="#fitur">Fitur Sistem</a>
-            <a href="#" class="btn-outline">Masuk</a>
-            <a href="#" class="btn-primary">Daftar</a>
-        </div>
-    </nav>
+    @include('partials.navbar')
 
     <section class="hero">
         <h1>Jelajahi Wisata <span>Ramah Lingkungan</span> di Indonesia</h1>
         <p>Temukan destinasi wisata dengan informasi iklim dan ekosistem real-time untuk keputusan perjalanan yang lebih aman dan berkelanjutan sesuai nilai SDGs.</p>
         
-        <div class="search-box">
+        <form action="/search" method="GET" class="search-box">
             <div class="search-group">
                 <label>Lokasi atau Nama Destinasi</label>
-                <input type="text" class="search-input" placeholder="Contoh: Raja Ampat, Bali...">
+                <input type="text" name="keyword" class="search-input" placeholder="Contoh: Raja Ampat, Bali...">
             </div>
             <div class="search-group">
                 <label>Kategori Ekosistem</label>
@@ -537,8 +510,8 @@
                     <option value="waspada">🟡 Waspada</option>
                 </select>
             </div>
-            <button class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
-        </div>
+            <button type="submit" class="btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Cari</button>
+        </form>
     </section>
 
     <!-- Interactive Map Section (MOCKUP) -->
@@ -547,13 +520,9 @@
             <h2>Peta Interaktif Destinasi GIS</h2>
             <p>Eksplorasi titik lokasi wisata di seluruh Indonesia terintegrasi dengan pemetaan Geographic Information System (GIS).</p>
         </div>
+
         <div class="map-container">
-            <div class="map-overlay">
-                <i class="fa-solid fa-map-location-dot"></i>
-                <h3>Modul Peta Interaktif (Leaflet.js)</h3>
-                <p style="margin-top: 15px; max-width: 500px; line-height: 1.6;">Di sinilah Peta Interaktif akan ditampilkan. Peta akan menampilkan marker lokasi wisata yang secara visual menunjukkan indikator status lingkungan (Aman/Waspada/Bahaya).</p>
-                <button class="btn-primary" style="margin-top: 25px;"><i class="fa-solid fa-expand"></i> Buka Peta Penuh</button>
-            </div>
+            <div id="map"></div>
         </div>
     </section>
 
@@ -564,97 +533,53 @@
             <p>Sistem kami merekomendasikan destinasi wisata dengan skor kelayakan lingkungan terbaik berdasarkan data API Eksternal (Iklim & Ekosistem).</p>
         </div>
         
+        @if(isset($recommendations) && $recommendations->count() > 0)
         <div class="dest-grid">
-            <!-- Card 1 -->
+            @foreach($recommendations as $rec)
             <div class="dest-card">
                 <div class="dest-img-container">
-                    <img src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?q=80&w=800&auto=format&fit=crop" alt="Taman Nasional Komodo" class="dest-img">
+                    <img src="{{ $rec->image_url ?: 'https://images.unsplash.com/photo-1518182170546-076616fd46bc?q=80&w=800&auto=format&fit=crop' }}" alt="{{ $rec->name }}" class="dest-img">
                     <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
                 </div>
                 <div class="dest-info">
                     <div class="tags">
-                        <span class="tag safe"><i class="fa-solid fa-circle-check"></i> Aman</span>
-                        <span class="tag category"><i class="fa-solid fa-mountain"></i> Darat</span>
+                        @if($rec->environment_status === 'aman' || $rec->environment_status === 'ramah_lingkungan')
+                            <span class="tag safe"><i class="fa-solid fa-circle-check"></i> Aman</span>
+                        @elseif($rec->environment_status === 'waspada')
+                            <span class="tag warning"><i class="fa-solid fa-triangle-exclamation"></i> Waspada</span>
+                        @else
+                            <span class="tag danger"><i class="fa-solid fa-triangle-exclamation"></i> Bahaya</span>
+                        @endif
+                        <span class="tag category"><i class="fa-solid fa-leaf"></i> Ekosistem Terjaga</span>
                     </div>
                     <div class="dest-header">
-                        <h3 class="dest-title">Taman Nasional Komodo</h3>
+                        <h3 class="dest-title">{{ $rec->name }}</h3>
                         <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.8 (120)
+                            <i class="fa-solid fa-star"></i> 4.9
                         </div>
                     </div>
                     <div class="dest-location">
-                        <i class="fa-solid fa-location-dot"></i> Manggarai Barat, NTT
+                        <i class="fa-solid fa-location-dot"></i> {{ $rec->location }}
                     </div>
                     
                     <div class="env-status">
-                        <p><strong>Status Iklim:</strong> <span>Cerah, 28°C <i class="fa-solid fa-sun" style="color: #f59e0b"></i></span></p>
-                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terjaga Baik</span></p>
+                        @if(isset($rec->current_weather))
+                        <p><strong>Cuaca (BMKG):</strong> <span>{{ $rec->current_weather['weather_desc'] }}, {{ $rec->current_weather['t'] }}°C <img src="{{ $rec->current_weather['image'] }}" width="20" style="vertical-align: middle;"></span></p>
+                        @endif
+                        <p><strong>Tutupan Hutan:</strong> <span>{{ $rec->biotaData->forest_cover_pct ?? 'N/A' }}% <i class="fa-solid fa-tree" style="color: var(--primary)"></i></span></p>
+                        <p><strong>Terumbu Karang:</strong> <span style="color:var(--primary); font-weight: 600;">{{ ucwords(str_replace('_', ' ', $rec->biotaData->coral_reef_status ?? 'N/A')) }}</span></p>
                     </div>
                     
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
+                    <a href="{{ route('destinations.detail', $rec->id) }}" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
                 </div>
             </div>
-
-            <!-- Card 2 -->
-            <div class="dest-card">
-                <div class="dest-img-container">
-                    <img src="https://images.unsplash.com/photo-1516690553959-71a414d6b9b6?q=80&w=800&auto=format&fit=crop" alt="Raja Ampat" class="dest-img">
-                    <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
-                </div>
-                <div class="dest-info">
-                    <div class="tags">
-                        <span class="tag safe"><i class="fa-solid fa-circle-check"></i> Aman</span>
-                        <span class="tag category"><i class="fa-solid fa-water"></i> Laut</span>
-                    </div>
-                    <div class="dest-header">
-                        <h3 class="dest-title">Kepulauan Raja Ampat</h3>
-                        <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.9 (340)
-                        </div>
-                    </div>
-                    <div class="dest-location">
-                        <i class="fa-solid fa-location-dot"></i> Papua Barat Daya
-                    </div>
-                    
-                    <div class="env-status">
-                        <p><strong>Status Iklim:</strong> <span>Berawan, 26°C <i class="fa-solid fa-cloud" style="color: #64748b"></i></span></p>
-                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terumbu Karang Sehat</span></p>
-                    </div>
-                    
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="dest-card">
-                <div class="dest-img-container">
-                    <img src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?q=80&w=800&auto=format&fit=crop" alt="Gunung Bromo" class="dest-img">
-                    <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
-                </div>
-                <div class="dest-info">
-                    <div class="tags">
-                        <span class="tag warning"><i class="fa-solid fa-triangle-exclamation"></i> Waspada</span>
-                        <span class="tag category"><i class="fa-solid fa-mountain"></i> Darat</span>
-                    </div>
-                    <div class="dest-header">
-                        <h3 class="dest-title">Gunung Bromo</h3>
-                        <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.7 (500+)
-                        </div>
-                    </div>
-                    <div class="dest-location">
-                        <i class="fa-solid fa-location-dot"></i> Probolinggo, Jawa Timur
-                    </div>
-                    
-                    <div class="env-status warning-status">
-                        <p><strong>Status Iklim:</strong> <span>Hujan Ringan, 18°C <i class="fa-solid fa-cloud-rain" style="color: #3b82f6"></i></span></p>
-                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--warning); font-weight: 600;">Aktivitas Vulkanik</span></p>
-                    </div>
-                    
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Cari Alternatif</a>
-                </div>
-            </div>
+            @endforeach
         </div>
+        @else
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <p>Belum ada destinasi yang memenuhi kriteria ekosistem unggulan.</p>
+        </div>
+        @endif
     </section>
 
     <!-- Fitur Sistem -->
@@ -692,5 +617,82 @@
         <p>&copy; 2026 GreenTour Indonesia. Aplikasi pemetaan pariwisata yang mendukung Sustainable Development Goals.</p>
     </footer>
 
+    <!-- Load Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the map centered on Indonesia
+            var map = L.map('map').setView([-2.5489, 118.0149], 5);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            // Dynamic data from database
+            var dbMapLayers = @json($mapLayers);
+            
+            if (dbMapLayers && dbMapLayers.length > 0) {
+                // Parse dynamic data
+                dbMapLayers.forEach(function(layer) {
+                    if (layer.layer_type === 'marker') {
+                        var coords = layer.coordinates; // assuming json {"lat": ..., "lng": ...}
+                        if(typeof coords === 'string') coords = JSON.parse(coords);
+                        
+                        var marker = L.marker([coords.lat, coords.lng]).addTo(map);
+                        var popupContent = `
+                            <div style="font-family: 'Inter', sans-serif;">
+                                <h4 style="margin: 0 0 5px 0; font-weight: 700;">${layer.name}</h4>
+                                <p style="margin: 0 0 10px 0; font-size: 0.9rem;">
+                                    Tipe Area: <strong>${layer.area_type ? layer.area_type.replace('_', ' ') : 'Kawasan Wisata'}</strong>
+                                </p>
+                                <a href="/destinations/${layer.destination_id}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">Lihat Detail &rarr;</a>
+                            </div>
+                        `;
+                        marker.bindPopup(popupContent);
+                    } else if (layer.layer_type === 'polygon' || layer.layer_type === 'polyline') {
+                        var coordsList = layer.coordinates;
+                        if(typeof coordsList === 'string') coordsList = JSON.parse(coordsList);
+                        var latlngs = coordsList.map(c => [c.lat, c.lng]);
+                        
+                        var shapeOptions = {
+                            color: layer.color || '#3388ff',
+                            weight: layer.stroke_weight || 3,
+                            fillColor: layer.fill_color || '#3388ff',
+                            fillOpacity: layer.fill_opacity || 0.2
+                        };
+                        
+                        var shape = layer.layer_type === 'polygon' 
+                            ? L.polygon(latlngs, shapeOptions).addTo(map)
+                            : L.polyline(latlngs, shapeOptions).addTo(map);
+                            
+                        shape.bindPopup(`<strong>${layer.name}</strong><br>${layer.description || ''}`);
+                    }
+                });
+            } else {
+                // Fallback to dummy data if DB is empty
+                var destinations = [
+                    { name: "Taman Nasional Komodo", lat: -8.5397, lng: 119.4806, status: "Aman" },
+                    { name: "Kepulauan Raja Ampat", lat: -0.2306, lng: 130.5186, status: "Aman" },
+                    { name: "Gunung Bromo", lat: -7.9425, lng: 112.9530, status: "Waspada" }
+                ];
+
+                destinations.forEach(function(dest) {
+                    var marker = L.marker([dest.lat, dest.lng]).addTo(map);
+                    var statusColor = dest.status === 'Aman' ? '#10b981' : (dest.status === 'Waspada' ? '#f59e0b' : '#ef4444');
+                    var popupContent = `
+                        <div style="font-family: 'Inter', sans-serif;">
+                            <h4 style="margin: 0 0 5px 0; font-weight: 700;">${dest.name}</h4>
+                            <p style="margin: 0; font-size: 0.9rem;">
+                                Status Lingkungan: <strong style="color: ${statusColor};">${dest.status}</strong>
+                            </p>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
