@@ -109,6 +109,7 @@ class DestinationController extends Controller
 
     public function show($id)
     {
+        // FR04: Detail Informasi Destinasi
         $destination = Destination::with(['mapLayers', 'biotaData', 'reviews.user'])->findOrFail($id);
 
         // FR05: Integrasi Data Iklim (BMKG API)
@@ -163,7 +164,6 @@ class DestinationController extends Controller
             $score += 1;
             $reasons[] = "Status lingkungan ditetapkan sebagai WASPADA oleh administrator sistem.";
         }
-
         $kelayakanStatus = 'Aman';
         $kelayakanClass = 'status-aman';
         if ($score >= 2) {
