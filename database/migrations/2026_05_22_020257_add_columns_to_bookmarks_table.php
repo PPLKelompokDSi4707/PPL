@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bookmarks', function (Blueprint $table) {
+        Schema::create('bookmarks', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('destination_id')->constrained()->cascadeOnDelete();
             
             // User can only bookmark a destination once
             $table->unique(['user_id', 'destination_id']);
+            $table->timestamps();
         });
     }
 

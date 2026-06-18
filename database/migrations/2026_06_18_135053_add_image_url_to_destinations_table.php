@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (! Schema::hasTable('destinations') || Schema::hasColumn('destinations', 'bmkg_adm4')) {
+        if (! Schema::hasTable('destinations') || Schema::hasColumn('destinations', 'image_url')) {
             return;
         }
 
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (! Schema::hasTable('destinations') || ! Schema::hasColumn('destinations', 'bmkg_adm4')) {
+        if (! Schema::hasTable('destinations') || ! Schema::hasColumn('destinations', 'image_url')) {
             return;
         }
 
