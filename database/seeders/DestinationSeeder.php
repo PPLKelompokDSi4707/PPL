@@ -757,7 +757,7 @@ class DestinationSeeder extends Seeder
         // Dapatkan atau buat user untuk created_by pada map layer
         $user = User::firstOrCreate(
             ['email' => 'admin@greentour.test'],
-            ['name' => 'Admin', 'password' => bcrypt('password')]
+            ['name' => 'Admin', 'password' => bcrypt('password'), 'role' => 'admin']
         );
 
         // Looping untuk menyimpan data ke database
