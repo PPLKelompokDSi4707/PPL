@@ -16,7 +16,7 @@ return new class extends Migration
         }
 
         Schema::table('destinations', function (Blueprint $table) {
-            $table->string('bmkg_adm4')->nullable()->comment('Kode wilayah tingkat 4 BMKG');
+            $table->string('image_url')->nullable();
         });
     }
 
@@ -30,7 +30,7 @@ return new class extends Migration
         }
 
         Schema::table('destinations', function (Blueprint $table) {
-            $table->dropColumn('bmkg_adm4');
+            //
         });
     }
 };

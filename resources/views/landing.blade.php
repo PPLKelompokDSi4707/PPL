@@ -483,6 +483,7 @@
 </head>
 <body>
 
+<<<<<<< HEAD
     <nav>
         <div class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</div>
         <div class="nav-links">
@@ -503,6 +504,9 @@
             @endauth
         </div>
     </nav>
+=======
+    @include('partials.navbar')
+>>>>>>> alvi
 
     <section class="hero">
         <h1>Jelajahi Wisata <span>Ramah Lingkungan</span> di Indonesia</h1>
@@ -540,6 +544,7 @@
             <p>Eksplorasi titik lokasi wisata di seluruh Indonesia terintegrasi dengan pemetaan Geographic Information System (GIS).</p>
         </div>
 
+<<<<<<< HEAD
     <!-- FR08: Rekomendasi Destinasi -->
     @if(isset($recommendations) && $recommendations->count() > 0)
     <div style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
@@ -566,6 +571,8 @@
     </div>
     @endif
 
+=======
+>>>>>>> alvi
         <div class="map-container">
             <div id="map"></div>
         </div>
@@ -578,97 +585,53 @@
             <p>Sistem kami merekomendasikan destinasi wisata dengan skor kelayakan lingkungan terbaik berdasarkan data API Eksternal (Iklim & Ekosistem).</p>
         </div>
         
+        @if(isset($recommendations) && $recommendations->count() > 0)
         <div class="dest-grid">
-            <!-- Card 1 -->
+            @foreach($recommendations as $rec)
             <div class="dest-card">
                 <div class="dest-img-container">
-                    <img src="https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?q=80&w=800&auto=format&fit=crop" alt="Taman Nasional Komodo" class="dest-img">
+                    <img src="{{ $rec->image_url ?: 'https://images.unsplash.com/photo-1518182170546-076616fd46bc?q=80&w=800&auto=format&fit=crop' }}" alt="{{ $rec->name }}" class="dest-img">
                     <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
                 </div>
                 <div class="dest-info">
                     <div class="tags">
-                        <span class="tag safe"><i class="fa-solid fa-circle-check"></i> Aman</span>
-                        <span class="tag category"><i class="fa-solid fa-mountain"></i> Darat</span>
+                        @if($rec->environment_status === 'aman' || $rec->environment_status === 'ramah_lingkungan')
+                            <span class="tag safe"><i class="fa-solid fa-circle-check"></i> Aman</span>
+                        @elseif($rec->environment_status === 'waspada')
+                            <span class="tag warning"><i class="fa-solid fa-triangle-exclamation"></i> Waspada</span>
+                        @else
+                            <span class="tag danger"><i class="fa-solid fa-triangle-exclamation"></i> Bahaya</span>
+                        @endif
+                        <span class="tag category"><i class="fa-solid fa-leaf"></i> Ekosistem Terjaga</span>
                     </div>
                     <div class="dest-header">
-                        <h3 class="dest-title">Taman Nasional Komodo</h3>
+                        <h3 class="dest-title">{{ $rec->name }}</h3>
                         <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.8 (120)
+                            <i class="fa-solid fa-star"></i> 4.9
                         </div>
                     </div>
                     <div class="dest-location">
-                        <i class="fa-solid fa-location-dot"></i> Manggarai Barat, NTT
+                        <i class="fa-solid fa-location-dot"></i> {{ $rec->location }}
                     </div>
                     
                     <div class="env-status">
-                        <p><strong>Status Iklim:</strong> <span>Cerah, 28°C <i class="fa-solid fa-sun" style="color: #f59e0b"></i></span></p>
-                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terjaga Baik</span></p>
+                        @if(isset($rec->current_weather))
+                        <p><strong>Cuaca (BMKG):</strong> <span>{{ $rec->current_weather['weather_desc'] }}, {{ $rec->current_weather['t'] }}°C <img src="{{ $rec->current_weather['image'] }}" width="20" style="vertical-align: middle;"></span></p>
+                        @endif
+                        <p><strong>Tutupan Hutan:</strong> <span>{{ $rec->biotaData->forest_cover_pct ?? 'N/A' }}% <i class="fa-solid fa-tree" style="color: var(--primary)"></i></span></p>
+                        <p><strong>Terumbu Karang:</strong> <span style="color:var(--primary); font-weight: 600;">{{ ucwords(str_replace('_', ' ', $rec->biotaData->coral_reef_status ?? 'N/A')) }}</span></p>
                     </div>
                     
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
+                    <a href="{{ route('destinations.detail', $rec->id) }}" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
                 </div>
             </div>
-
-            <!-- Card 2 -->
-            <div class="dest-card">
-                <div class="dest-img-container">
-                    <img src="https://images.unsplash.com/photo-1516690553959-71a414d6b9b6?q=80&w=800&auto=format&fit=crop" alt="Raja Ampat" class="dest-img">
-                    <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
-                </div>
-                <div class="dest-info">
-                    <div class="tags">
-                        <span class="tag safe"><i class="fa-solid fa-circle-check"></i> Aman</span>
-                        <span class="tag category"><i class="fa-solid fa-water"></i> Laut</span>
-                    </div>
-                    <div class="dest-header">
-                        <h3 class="dest-title">Kepulauan Raja Ampat</h3>
-                        <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.9 (340)
-                        </div>
-                    </div>
-                    <div class="dest-location">
-                        <i class="fa-solid fa-location-dot"></i> Papua Barat Daya
-                    </div>
-                    
-                    <div class="env-status">
-                        <p><strong>Status Iklim:</strong> <span>Berawan, 26°C <i class="fa-solid fa-cloud" style="color: #64748b"></i></span></p>
-                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--primary); font-weight: 600;">Terumbu Karang Sehat</span></p>
-                    </div>
-                    
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Detail Lokasi</a>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="dest-card">
-                <div class="dest-img-container">
-                    <img src="https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?q=80&w=800&auto=format&fit=crop" alt="Gunung Bromo" class="dest-img">
-                    <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
-                </div>
-                <div class="dest-info">
-                    <div class="tags">
-                        <span class="tag warning"><i class="fa-solid fa-triangle-exclamation"></i> Waspada</span>
-                        <span class="tag category"><i class="fa-solid fa-mountain"></i> Darat</span>
-                    </div>
-                    <div class="dest-header">
-                        <h3 class="dest-title">Gunung Bromo</h3>
-                        <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.7 (500+)
-                        </div>
-                    </div>
-                    <div class="dest-location">
-                        <i class="fa-solid fa-location-dot"></i> Probolinggo, Jawa Timur
-                    </div>
-                    
-                    <div class="env-status warning-status">
-                        <p><strong>Status Iklim:</strong> <span>Hujan Ringan, 18°C <i class="fa-solid fa-cloud-rain" style="color: #3b82f6"></i></span></p>
-                        <p><strong>Kondisi Ekosistem:</strong> <span style="color:var(--warning); font-weight: 600;">Aktivitas Vulkanik</span></p>
-                    </div>
-                    
-                    <a href="#" class="btn-outline" style="width: 100%; text-align: center; display: block; margin-top: 1.5rem;">Cari Alternatif</a>
-                </div>
-            </div>
+            @endforeach
         </div>
+        @else
+        <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+            <p>Belum ada destinasi yang memenuhi kriteria ekosistem unggulan.</p>
+        </div>
+        @endif
     </section>
 
     <!-- Fitur Sistem -->

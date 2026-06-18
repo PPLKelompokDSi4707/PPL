@@ -54,6 +54,7 @@
 </head>
 <body>
 
+<<<<<<< HEAD
     <nav>
         <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</a>
         <div style="display: flex; gap: 15px; align-items: center;">
@@ -70,6 +71,9 @@
             @endauth
         </div>
     </nav>
+=======
+    @include('partials.navbar')
+>>>>>>> alvi
 
     <div class="container">
         <div class="header">
@@ -99,7 +103,7 @@
             <div class="dest-list">
                 @forelse($destinations as $dest)
                 <div class="dest-card">
-                    <div class="dest-img"></div>
+                    <img src="{{ $dest->image_url ?: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop' }}" alt="{{ $dest->name }}" class="dest-img">
                     <div class="dest-info">
                         <h3 class="dest-title">{{ $dest->name }}</h3>
                         <p class="dest-location"><i class="fa-solid fa-location-dot"></i> {{ $dest->location }}</p>

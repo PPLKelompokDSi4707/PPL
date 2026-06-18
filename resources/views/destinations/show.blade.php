@@ -28,7 +28,7 @@
         .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary); text-decoration: none; }
         .btn-outline { border: 2px solid var(--primary); color: var(--primary); padding: 0.5rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
         
-        .hero { width: 100%; height: 400px; background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop') center/cover; position: relative; }
+        .hero { width: 100%; height: 400px; position: relative; }
         .hero-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.8), transparent); display: flex; align-items: flex-end; padding: 3rem 5%; color: white; }
         .hero-content h1 { font-size: 3rem; margin-bottom: 0.5rem; }
         .hero-content p { font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
@@ -56,6 +56,7 @@
 </head>
 <body>
 
+<<<<<<< HEAD
     <nav>
         <a href="/" class="logo"><i class="fa-solid fa-leaf"></i> GreenTour</a>
         <div style="display: flex; gap: 15px; align-items: center;">
@@ -72,8 +73,11 @@
             @endauth
         </div>
     </nav>
+=======
+    @include('partials.navbar')
+>>>>>>> alvi
 
-    <div class="hero">
+    <div class="hero" style="background: url('{{ $destination->image_url ?: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=2000&auto=format&fit=crop' }}') center/cover;">
         <div class="hero-overlay">
             <div class="hero-content" style="width: 100%; display: flex; justify-content: space-between; align-items: flex-end;">
                 <div>
@@ -189,6 +193,10 @@
                     
                 </div>
             </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> alvi
             <!-- FR11: Sistem Review dan Rating -->
             <div class="card" style="margin-top: 2rem;">
                 <h2><i class="fa-solid fa-star" style="color: #fbbf24;"></i> Ulasan & Penilaian (FR11)</h2>
@@ -279,7 +287,10 @@
                     @endif
                 </div>
             </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> alvi
         </div>
 
         <div class="sidebar">
