@@ -384,7 +384,12 @@
                                     @endif
                                 </div>
                                 
-                                <h3 class="dest-title">{{ $dest->name }}</h3>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; gap: 15px;">
+                                    <h3 class="dest-title" style="margin-bottom: 0;">{{ $dest->name }}</h3>
+                                    <div style="display: flex; align-items: center; gap: 0.3rem; color: #f59e0b; font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
+                                        <i class="fa-solid fa-star"></i> {{ number_format($dest->reviews->avg('rating') ?: 0, 1) }}
+                                    </div>
+                                </div>
                                 <div class="dest-location">
                                     <i class="fa-solid fa-location-dot"></i> {{ $dest->location }}
                                 </div>

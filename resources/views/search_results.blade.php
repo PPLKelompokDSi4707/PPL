@@ -86,8 +86,13 @@
                 <div class="dest-card">
                     <img src="{{ $dest->image_url ?: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop' }}" alt="{{ $dest->name }}" class="dest-img">
                     <div class="dest-info">
-                        <h3 class="dest-title">{{ $dest->name }}</h3>
-                        <p class="dest-location"><i class="fa-solid fa-location-dot"></i> {{ $dest->location }}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; gap: 15px;">
+                            <h3 class="dest-title" style="margin-bottom: 0;">{{ $dest->name }}</h3>
+                            <div style="display: flex; align-items: center; gap: 0.3rem; color: #f59e0b; font-size: 0.95rem; font-weight: 600; white-space: nowrap;">
+                                <i class="fa-solid fa-star"></i> {{ number_format($dest->reviews->avg('rating') ?: 0, 1) }}
+                            </div>
+                        </div>
+                        <p class="dest-location" style="margin-bottom: 1rem;"><i class="fa-solid fa-location-dot"></i> {{ $dest->location }}</p>
                         <a href="{{ route('destinations.detail', $dest->id) }}" style="color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem;">Lihat Detail &rarr;</a>
                     </div>
                 </div>

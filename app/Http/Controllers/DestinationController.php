@@ -14,7 +14,7 @@ class DestinationController extends Controller
         
         // FR08: Rekomendasi Destinasi Ramah Lingkungan
         // Coba cari yang ekosistemnya bagus dulu
-        $recommendations = Destination::with('biotaData')
+        $recommendations = Destination::with(['biotaData', 'reviews'])
             ->whereHas('biotaData', function ($query) {
                 $query->where('forest_cover_pct', '>=', 70)
                       ->orWhereIn('coral_reef_status', ['sangat_baik', 'baik']);
@@ -25,7 +25,7 @@ class DestinationController extends Controller
 
         // Jika kosong (karena data belum lengkap), tampilkan saja destinasi yang ada
         if ($recommendations->count() == 0) {
-            $recommendations = Destination::with('biotaData')
+            $recommendations = Destination::with(['biotaData', 'reviews'])
                 ->where('environment_status', '!=', 'bahaya')
                 ->inRandomOrder()
                 ->take(3)
@@ -95,7 +95,7 @@ class DestinationController extends Controller
             }
         }
 
-        $destinations = $query->get();
+        $destinations = $query->with('reviews')->get();
 
         // Kita juga mem-passing data mapLayers terkait destinasi yang dicari agar peta bisa terupdate
         $destinationIds = $destinations->pluck('id')->toArray();

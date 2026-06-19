@@ -12,7 +12,7 @@ class BookmarkController extends Controller
     public function index()
     {
         $bookmarks = Bookmark::where('user_id', Auth::id())
-            ->with(['destination.biotaData'])
+            ->with(['destination.biotaData', 'destination.reviews'])
             ->latest()
             ->get();
 

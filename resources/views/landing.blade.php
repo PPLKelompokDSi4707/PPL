@@ -570,7 +570,7 @@
                     <div class="dest-header">
                         <h3 class="dest-title">{{ $rec->name }}</h3>
                         <div class="dest-rating">
-                            <i class="fa-solid fa-star"></i> 4.9
+                            <i class="fa-solid fa-star"></i> {{ number_format($rec->reviews->avg('rating') ?: 0, 1) }}
                         </div>
                     </div>
                     <div class="dest-location">
