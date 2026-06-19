@@ -9,6 +9,16 @@ use Illuminate\Support\Facades\Auth;
 
 class BookmarkController extends Controller
 {
+    public function index()
+    {
+        $bookmarks = Bookmark::where('user_id', Auth::id())
+            ->with(['destination.biotaData'])
+            ->latest()
+            ->get();
+
+        return view('bookmarks.index', compact('bookmarks'));
+    }
+
     public function toggle($id)
     {
         $destination = Destination::findOrFail($id);

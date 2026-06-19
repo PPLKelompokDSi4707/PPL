@@ -21,6 +21,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/bookmarks', [\App\Http\Controllers\BookmarkController::class, 'index'])->name('bookmarks.index');
     Route::post('/destinations/{id}/bookmark', [\App\Http\Controllers\BookmarkController::class, 'toggle'])->name('bookmarks.toggle');
     Route::post('/destinations/{id}/review', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
 });

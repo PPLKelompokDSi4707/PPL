@@ -45,6 +45,9 @@
             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'super_admin')
                 <a href="{{ route('admin.dashboard') }}" style="background:var(--primary); color:white; padding:6px 12px; border-radius:6px; text-decoration:none; font-weight:600; font-size: 0.9rem; margin-right: 10px;"><i class="fa-solid fa-gauge"></i> Panel Admin</a>
             @endif
+            <a href="{{ route('bookmarks.index') }}" style="color: var(--primary); text-decoration: none; font-weight: 600; margin-right: 15px; display: inline-flex; align-items: center; gap: 5px;">
+                <i class="fa-solid fa-bookmark"></i> Bookmark
+            </a>
             <span style="font-weight: 500; margin-right: 10px;">Halo, {{ Auth::user()->name }}</span>
             <form action="{{ route('logout') }}" method="POST" style="display:inline;">
                 @csrf
