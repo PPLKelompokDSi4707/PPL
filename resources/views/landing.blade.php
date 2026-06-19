@@ -540,7 +540,21 @@
             <div class="dest-card">
                 <div class="dest-img-container">
                     <img src="{{ $rec->image_url ?: 'https://images.unsplash.com/photo-1518182170546-076616fd46bc?q=80&w=800&auto=format&fit=crop' }}" alt="{{ $rec->name }}" class="dest-img">
-                    <button class="bookmark-btn" title="Simpan ke Favorit"><i class="fa-regular fa-bookmark"></i></button>
+                    @auth
+                        @php
+                            $isBookmarked = \App\Models\Bookmark::where('user_id', auth()->id())->where('destination_id', $rec->id)->exists();
+                        @endphp
+                        <form action="{{ route('bookmarks.toggle', $rec->id) }}" method="POST" style="position: absolute; top: 15px; right: 15px; z-index: 10; margin: 0; padding: 0;">
+                            @csrf
+                            <button type="submit" class="bookmark-btn" title="{{ $isBookmarked ? 'Hapus dari Favorit' : 'Simpan ke Favorit' }}" style="position: static; color: {{ $isBookmarked ? 'var(--primary)' : 'var(--text-muted)' }};">
+                                <i class="{{ $isBookmarked ? 'fa-solid' : 'fa-regular' }} fa-bookmark"></i>
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}" class="bookmark-btn" title="Simpan ke Favorit" style="text-decoration: none;">
+                            <i class="fa-regular fa-bookmark"></i>
+                        </a>
+                    @endauth
                 </div>
                 <div class="dest-info">
                     <div class="tags">
